@@ -6,6 +6,8 @@ import App from "./components/App";
 
 import store from "./store";
 
+import "./index.css";
+
 const Wrapper = () => {
   return (
     <Provider store={store}>
