@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const AprumAPI = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1",
-  timeout: 20000,
+  baseURL: "https://aprum-api.herokuapp.com/api/v1",
+  timeout: 30000,
 });
 
 AprumAPI.interceptors.request.use(
