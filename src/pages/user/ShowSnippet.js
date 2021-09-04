@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import {
   editSnippet,
   execSnippet,
+  resetCurrentSnippet,
   setSnippetBody,
   setSnippetDescription,
   setSnippetEditMode,
@@ -52,7 +53,7 @@ const ShowSnippet = () => {
 
   useEffect(() => {
     dispatch(showLoading());
-
+    dispatch(resetCurrentSnippet());
     AprumAPI.get(`/snippets/${slug}`).then((res) => {
       const { owner, snippet } = res.data;
       if (owner) {
@@ -80,7 +81,7 @@ const ShowSnippet = () => {
   return (
     <>
       <Helmet>
-        <title>Snippet title | Aprum</title>
+        <title>{currentSnippet.title} | Aprum</title>
       </Helmet>
       <main className="min-h-screen p-4 md:p-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between my-4 space-y-4 md:space-y-0">
@@ -93,13 +94,13 @@ const ShowSnippet = () => {
             <div>
               <input
                 placeholder="Title"
-                className="bg-transparent my-0.5 text-white block text-3xl md:text-4xl focus:outline-none"
+                className="bg-transparent my-0.5 text-white block text-2xl md:text-4xl focus:outline-none"
                 value={currentSnippet.title}
                 onChange={(e) => dispatch(setSnippetTitle(e.target.value))}
               />
               <input
                 placeholder="Description"
-                className="bg-transparent text-white block font-light focus:outline-none"
+                className="bg-transparent text-white block text-sm md:text-base font-light focus:outline-none"
                 value={currentSnippet.description}
                 onChange={(e) =>
                   dispatch(setSnippetDescription(e.target.value))
@@ -121,7 +122,7 @@ const ShowSnippet = () => {
           <div className="shadow-md rounded h-96">
             <CodeMirror
               onChange={(e) => dispatch(setSnippetBody(e.getValue()))}
-              value={currentSnippet.body}
+              value={currentSnippet.body ?? ""}
               options={{
                 theme: "ayu-mirage",
                 mode: currentSnippet.language,
