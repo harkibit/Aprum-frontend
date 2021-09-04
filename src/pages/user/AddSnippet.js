@@ -30,13 +30,13 @@ import { Switch } from "@headlessui/react";
 
 const AddSnippet = () => {
   const dispatch = useDispatch();
-  const { exec, currentSnippet } = useSelector((state) => state.snippet);
-  const language = useSelector((state) => state.language);
+  const { exec, currentSnippet } = useSelector(state => state.snippet);
+  const language = useSelector(state => state.language);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const defaultCodeMirrorValue = "/* build something amazing! */";
-  const handleKeyEvent = (key) => {
+  const handleKeyEvent = key => {
     switch (key) {
       case "ctrl+F5":
         dispatch(execSnippet());
@@ -47,7 +47,7 @@ const AddSnippet = () => {
     }
   };
 
-  const handleSnippetLanguageChange = (e) => {
+  const handleSnippetLanguageChange = e => {
     const { selectedIndex, value } = e.target;
     setSelectedIndex(selectedIndex);
     dispatch(setSnippetLanguage(value));
@@ -61,7 +61,7 @@ const AddSnippet = () => {
     );
   };
 
-  const handleSnippetLanguageVersionChange = (e) => {
+  const handleSnippetLanguageVersionChange = e => {
     const index = e.target.selectedIndex;
     const version = language.languages[selectedIndex].versions[index];
     dispatch(
@@ -73,7 +73,7 @@ const AddSnippet = () => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       const { key, metaKey, ctrlKey } = e;
       if ((key === "s" || key === "F5") && (ctrlKey || metaKey)) {
         e.preventDefault();
@@ -117,13 +117,13 @@ const AddSnippet = () => {
               placeholder="Title"
               className="bg-transparent my-0.5 text-white block text-4xl focus:outline-none"
               value={currentSnippet.title}
-              onChange={(e) => dispatch(setSnippetTitle(e.target.value))}
+              onChange={e => dispatch(setSnippetTitle(e.target.value))}
             />
             <input
               placeholder="Description"
               className="bg-transparent text-white block font-light focus:outline-none"
               value={currentSnippet.description}
-              onChange={(e) => dispatch(setSnippetDescription(e.target.value))}
+              onChange={e => dispatch(setSnippetDescription(e.target.value))}
             />
           </div>
           <div className="flex items-center space-x-4">
@@ -138,7 +138,7 @@ const AddSnippet = () => {
                   onChange={handleSnippetLanguageChange}
                   className="bg-gray-600 ring-offset-2 shadow-md ring-offset-gray-800 text-gray-200 py-1.5 px-8 focus:ring-1 ring-primary rounded-md focus:outline-none"
                 >
-                  {language.languages.map((language) => (
+                  {language.languages.map(language => (
                     <option value={language.code} key={language.id}>
                       {language.name}
                     </option>
@@ -148,11 +148,9 @@ const AddSnippet = () => {
                   onChange={handleSnippetLanguageVersionChange}
                   className="bg-gray-600 ring-offset-2 shadow-md ring-offset-gray-800 text-gray-200 py-1.5 px-8 focus:ring-1 ring-primary rounded-md focus:outline-none"
                 >
-                  {language.languages[selectedIndex]?.versions.map(
-                    (version) => (
-                      <option key={version.id}>{version.name}</option>
-                    )
-                  )}
+                  {language.languages[selectedIndex]?.versions.map(version => (
+                    <option key={version.id}>{version.name}</option>
+                  ))}
                 </select>
               </>
             )}
@@ -161,7 +159,7 @@ const AddSnippet = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="shadow-md rounded h-96">
             <CodeMirror
-              onChange={(e) => dispatch(setSnippetBody(e.getValue()))}
+              onChange={e => dispatch(setSnippetBody(e.getValue()))}
               value={currentSnippet.body ?? defaultCodeMirrorValue}
               options={{
                 theme: "ayu-mirage",
