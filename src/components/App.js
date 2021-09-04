@@ -19,6 +19,7 @@ import AddSnippet from "../pages/user/AddSnippet";
 import SnippetsLayout from "../layouts/SnippetsLayout";
 import UserSnippets from "../pages/user/Snippets";
 import LatestSnippets from "./Snippets";
+import ShowSnippet from "../pages/user/ShowSnippet";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -49,18 +50,29 @@ const App = () => {
             path="/snippets/add"
             component={AddSnippet}
           />
-          <Route path="/snippets">
-            <SnippetsLayout>
-              <Route exact path="/snippets/latest" component={LatestSnippets} />
-              <PrivateRoute
-                type="private"
-                exact
-                path="/snippets/personal"
-                component={UserSnippets}
-              />
-              <Redirect from="/" to="/snippets/latest" />
-            </SnippetsLayout>
-          </Route>
+
+          <Route exact path="/s/:slug" component={ShowSnippet} />
+          <Redirect exact from="/snippets" to="/snippets/latest" />
+          <SnippetsLayout>
+            <PrivateRoute
+              type="private"
+              exact
+              path="/snippets/latest"
+              component={LatestSnippets}
+            />
+            <PrivateRoute
+              type="private"
+              exact
+              path="/snippets/add"
+              component={AddSnippet}
+            />
+            <PrivateRoute
+              type="private"
+              exact
+              path="/snippets/personal"
+              component={UserSnippets}
+            />
+          </SnippetsLayout>
         </Switch>
       </ConnectedRouter>
     </div>

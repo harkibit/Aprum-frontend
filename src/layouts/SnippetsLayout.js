@@ -3,7 +3,7 @@ import { BookmarkIcon, FireIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, NavLink } from "react-router-dom";
 const SnippetsLayout = ({ children }) => {
   return (
-    <main className="min-h-screen p-10">
+    <main className="min-h-screen p-4 md:p-10">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <NavLink

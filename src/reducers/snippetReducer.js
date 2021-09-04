@@ -2,8 +2,10 @@ import {
   RESET_CURRENT_SNIPPET,
   SET_SNIPPET_BODY,
   SET_SNIPPET_DESCRIPTION,
+  SET_SNIPPET_EDIT_MODE,
   SET_SNIPPET_LANGUAGE,
   SET_SNIPPET_LANGUAGE_VERSION,
+  SET_SNIPPET_SLUG,
   SET_SNIPPET_TITLE,
   SET_SNIPPET_VISIBILITY,
   SNIPPET_EXEC_FAILED,
@@ -19,6 +21,8 @@ const initialState = {
     memory: null,
   },
   currentSnippet: {
+    editMode: false,
+    slug: null,
     title: "My New Snippet",
     description: "",
     body: null,
@@ -106,10 +110,17 @@ const snippetReducer = (state = initialState, action) => {
         ...state,
         currentSnippet: {
           ...state.currentSnippet,
+          editMode: false,
+          slug: null,
           title: "My New Snippet",
           description: "",
           body: null,
+          language: null,
           public: false,
+          version: {
+            versionIndex: null,
+            versionId: null,
+          },
         },
       };
     case SET_SNIPPET_VISIBILITY:
@@ -120,6 +131,23 @@ const snippetReducer = (state = initialState, action) => {
           public: action.payload,
         },
       };
+    case SET_SNIPPET_SLUG:
+      return {
+        ...state,
+        currentSnippet: {
+          ...state.currentSnippet,
+          slug: action.payload,
+        },
+      };
+    case SET_SNIPPET_EDIT_MODE:
+      return {
+        ...state,
+        currentSnippet: {
+          ...state.currentSnippet,
+          editMode: true,
+        },
+      };
+
     default:
       return state;
   }

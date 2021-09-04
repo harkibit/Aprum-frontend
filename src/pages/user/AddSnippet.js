@@ -14,6 +14,7 @@ import {
 
 import { loadLanguage } from "../../actions/languageActions";
 import {
+  editSnippet,
   execSnippet,
   saveSnippet,
   setSnippetBody,
@@ -24,9 +25,10 @@ import {
   setSnippetVisibility,
 } from "../../actions/snippetActions";
 
+import { Switch } from "@headlessui/react";
+
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/theme/ayu-mirage.css";
-import { Switch } from "@headlessui/react";
 
 const AddSnippet = () => {
   const dispatch = useDispatch();
@@ -42,7 +44,9 @@ const AddSnippet = () => {
         dispatch(execSnippet());
         break;
       case "ctrl+s":
-        dispatch(saveSnippet());
+        currentSnippet.editMode
+          ? dispatch(editSnippet())
+          : dispatch(saveSnippet());
         break;
     }
   };
@@ -82,10 +86,11 @@ const AddSnippet = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [currentSnippet.editMode]);
 
   useEffect(() => {
     // load supported languages into the redux store
+    // set mode to create
     dispatch(loadLanguage());
   }, []);
 
@@ -110,12 +115,12 @@ const AddSnippet = () => {
       <Helmet>
         <title>Add Snippet | Aprum</title>
       </Helmet>
-      <main className="min-h-screen p-10">
+      <main className="min-h-screen p-4 md:p-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between my-4 space-y-4 md:space-y-0">
           <div>
             <input
               placeholder="Title"
-              className="bg-transparent my-0.5 text-white block text-4xl focus:outline-none"
+              className="bg-transparent my-0.5 text-white block text-3xl md:text-4xl focus:outline-none"
               value={currentSnippet.title}
               onChange={(e) => dispatch(setSnippetTitle(e.target.value))}
             />
@@ -126,7 +131,7 @@ const AddSnippet = () => {
               onChange={(e) => dispatch(setSnippetDescription(e.target.value))}
             />
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {language.isLoading ? (
               <>
                 <div className="bg-gray-600 animate-pulse w-28 rounded-md h-8"></div>
@@ -201,7 +206,7 @@ const AddSnippet = () => {
             </div>
           </div>
         </div>
-        <div className="mt-5 flex items-center justify-between">
+        <div className="mt-5 flex items-center justify-start md:justify-between">
           <div className="text-gray-400 items-center space-x-2 hidden md:flex">
             <LightBulbIcon className="w-6 h-6" />
             <p>
@@ -232,14 +237,18 @@ const AddSnippet = () => {
         </div>
         <div className="md:hidden text-white">
           <button
-            className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-24"
+            className="rounded-full shadow-md bg-gray-600 p-2 fixed right-10 bottom-24"
             onClick={() => dispatch(execSnippet())}
           >
             <PlayIcon className="w-6 h-6" />
           </button>
           <button
-            className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-10"
-            onClick={() => dispatch(saveSnippet())}
+            className="rounded-full shadow-md bg-gray-600 p-2 fixed right-10 bottom-12"
+            onClick={() =>
+              currentSnippet.editMode
+                ? dispatch(editSnippet())
+                : dispatch(saveSnippet())
+            }
           >
             <SaveIcon className="w-6 h-6" />
           </button>
