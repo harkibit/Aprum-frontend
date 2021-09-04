@@ -231,10 +231,16 @@ const AddSnippet = () => {
           </div>
         </div>
         <div className="md:hidden text-white">
-          <button className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-24">
+          <button
+            className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-24"
+            onClick={() => dispatch(execSnippet())}
+          >
             <PlayIcon className="w-6 h-6" />
           </button>
-          <button className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-10">
+          <button
+            className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-10"
+            onClick={() => dispatch(saveSnippet())}
+          >
             <SaveIcon className="w-6 h-6" />
           </button>
         </div>
