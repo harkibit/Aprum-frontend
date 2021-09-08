@@ -30,9 +30,11 @@ const Snippets = () => {
         <title>My Snippets | Aprum</title>
       </Helmet>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {snippets.map((snippet) => (
+        {snippets.map((snippet, index) => (
           <Card
+            key={index}
             title={snippet.title}
+            slug={snippet.slug}
             description={snippet.description}
             version={snippet.version}
             user={user}

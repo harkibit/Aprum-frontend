@@ -3,7 +3,7 @@ import { BookmarkIcon, FireIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, NavLink } from "react-router-dom";
 const SnippetsLayout = ({ children }) => {
   return (
-    <main className="min-h-screen p-10">
+    <main className="min-h-screen p-4 md:p-10">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <NavLink
@@ -24,6 +24,17 @@ const SnippetsLayout = ({ children }) => {
             <p>Personal</p>
           </NavLink>
         </div>
+        <Link to="/auth/register">
+          <button
+            type="button"
+            className="bg-gray-600 py-2 px-8 flex text-sm text-white rounded"
+            id="user-menu-button"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            Logout
+          </button>
+        </Link>
         <Link
           to="/snippets/add"
           className="bg-secondary shadow-md text-gray-200 py-1.5 px-4 flex items-center space-x-2 rounded-md"

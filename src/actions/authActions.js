@@ -47,6 +47,7 @@ export const loadUser = () => (dispatch) => {
     .then((res) => {
       const { data: user } = res;
       dispatch(loginSuccess(user));
+      dispatch(push("/snippets/latest"));
     })
     .catch(() => dispatch(loginFailed()))
     .finally(() => dispatch(hideLoading()));
@@ -63,7 +64,7 @@ export const loginUser = (values, actions) => (dispatch) => {
       const { token } = res.data;
       dispatch(authSuccess(token));
       dispatch(loadUser());
-      dispatch(push("/"));
+      // dispatch(push("/snippets/latest"));
     })
     .catch(() => {
       dispatch(authFailed());

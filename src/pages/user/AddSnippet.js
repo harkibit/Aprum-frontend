@@ -14,7 +14,9 @@ import {
 
 import { loadLanguage } from "../../actions/languageActions";
 import {
+  editSnippet,
   execSnippet,
+  resetCurrentSnippet,
   saveSnippet,
   setSnippetBody,
   setSnippetDescription,
@@ -24,30 +26,33 @@ import {
   setSnippetVisibility,
 } from "../../actions/snippetActions";
 
+import { Switch } from "@headlessui/react";
+
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/theme/ayu-mirage.css";
-import { Switch } from "@headlessui/react";
 
 const AddSnippet = () => {
   const dispatch = useDispatch();
-  const { exec, currentSnippet } = useSelector(state => state.snippet);
-  const language = useSelector(state => state.language);
+  const { exec, currentSnippet } = useSelector((state) => state.snippet);
+  const language = useSelector((state) => state.language);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const defaultCodeMirrorValue = "/* build something amazing! */";
-  const handleKeyEvent = key => {
+  const handleKeyEvent = (key) => {
     switch (key) {
       case "ctrl+F5":
         dispatch(execSnippet());
         break;
       case "ctrl+s":
-        dispatch(saveSnippet());
+        currentSnippet.editMode
+          ? dispatch(editSnippet())
+          : dispatch(saveSnippet());
         break;
     }
   };
 
-  const handleSnippetLanguageChange = e => {
+  const handleSnippetLanguageChange = (e) => {
     const { selectedIndex, value } = e.target;
     setSelectedIndex(selectedIndex);
     dispatch(setSnippetLanguage(value));
@@ -61,7 +66,7 @@ const AddSnippet = () => {
     );
   };
 
-  const handleSnippetLanguageVersionChange = e => {
+  const handleSnippetLanguageVersionChange = (e) => {
     const index = e.target.selectedIndex;
     const version = language.languages[selectedIndex].versions[index];
     dispatch(
@@ -73,7 +78,7 @@ const AddSnippet = () => {
   };
 
   useEffect(() => {
-    const handleKeyDown = e => {
+    const handleKeyDown = (e) => {
       const { key, metaKey, ctrlKey } = e;
       if ((key === "s" || key === "F5") && (ctrlKey || metaKey)) {
         e.preventDefault();
@@ -82,11 +87,13 @@ const AddSnippet = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [currentSnippet.editMode]);
 
   useEffect(() => {
     // load supported languages into the redux store
+    // reset currentSnippet to default state
     dispatch(loadLanguage());
+    dispatch(resetCurrentSnippet());
   }, []);
 
   useEffect(() => {
@@ -110,23 +117,23 @@ const AddSnippet = () => {
       <Helmet>
         <title>Add Snippet | Aprum</title>
       </Helmet>
-      <main className="min-h-screen p-10">
+      <main className="min-h-screen p-4 md:p-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between my-4 space-y-4 md:space-y-0">
           <div>
             <input
               placeholder="Title"
-              className="bg-transparent my-0.5 text-white block text-4xl focus:outline-none"
+              className="bg-transparent my-0.5 text-white block text-2xl md:text-4xl focus:outline-none"
               value={currentSnippet.title}
-              onChange={e => dispatch(setSnippetTitle(e.target.value))}
+              onChange={(e) => dispatch(setSnippetTitle(e.target.value))}
             />
             <input
               placeholder="Description"
-              className="bg-transparent text-white block font-light focus:outline-none"
+              className="bg-transparent text-white block text-sm md:text-base font-light focus:outline-none"
               value={currentSnippet.description}
-              onChange={e => dispatch(setSnippetDescription(e.target.value))}
+              onChange={(e) => dispatch(setSnippetDescription(e.target.value))}
             />
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {language.isLoading ? (
               <>
                 <div className="bg-gray-600 animate-pulse w-28 rounded-md h-8"></div>
@@ -138,7 +145,7 @@ const AddSnippet = () => {
                   onChange={handleSnippetLanguageChange}
                   className="bg-gray-600 ring-offset-2 shadow-md ring-offset-gray-800 text-gray-200 py-1.5 px-8 focus:ring-1 ring-primary rounded-md focus:outline-none"
                 >
-                  {language.languages.map(language => (
+                  {language.languages.map((language) => (
                     <option value={language.code} key={language.id}>
                       {language.name}
                     </option>
@@ -148,9 +155,11 @@ const AddSnippet = () => {
                   onChange={handleSnippetLanguageVersionChange}
                   className="bg-gray-600 ring-offset-2 shadow-md ring-offset-gray-800 text-gray-200 py-1.5 px-8 focus:ring-1 ring-primary rounded-md focus:outline-none"
                 >
-                  {language.languages[selectedIndex]?.versions.map(version => (
-                    <option key={version.id}>{version.name}</option>
-                  ))}
+                  {language.languages[selectedIndex]?.versions.map(
+                    (version) => (
+                      <option key={version.id}>{version.name}</option>
+                    )
+                  )}
                 </select>
               </>
             )}
@@ -159,7 +168,7 @@ const AddSnippet = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="shadow-md rounded h-96">
             <CodeMirror
-              onChange={e => dispatch(setSnippetBody(e.getValue()))}
+              onChange={(e) => dispatch(setSnippetBody(e.getValue()))}
               value={currentSnippet.body ?? defaultCodeMirrorValue}
               options={{
                 theme: "ayu-mirage",
@@ -199,7 +208,7 @@ const AddSnippet = () => {
             </div>
           </div>
         </div>
-        <div className="mt-5 flex items-center justify-between">
+        <div className="mt-5 flex items-center justify-start md:justify-between">
           <div className="text-gray-400 items-center space-x-2 hidden md:flex">
             <LightBulbIcon className="w-6 h-6" />
             <p>
@@ -229,10 +238,20 @@ const AddSnippet = () => {
           </div>
         </div>
         <div className="md:hidden text-white">
-          <button className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-24">
+          <button
+            className="rounded-full shadow-md bg-gray-600 p-2 fixed right-10 bottom-24"
+            onClick={() => dispatch(execSnippet())}
+          >
             <PlayIcon className="w-6 h-6" />
           </button>
-          <button className="rounded-full shadow-md bg-primary p-2 fixed right-10 bottom-10">
+          <button
+            className="rounded-full shadow-md bg-gray-600 p-2 fixed right-10 bottom-12"
+            onClick={() =>
+              currentSnippet.editMode
+                ? dispatch(editSnippet())
+                : dispatch(saveSnippet())
+            }
+          >
             <SaveIcon className="w-6 h-6" />
           </button>
         </div>
